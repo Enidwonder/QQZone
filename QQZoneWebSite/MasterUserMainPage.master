@@ -5,17 +5,135 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title></title>
+    <title>QQZONE</title>
     <asp:ContentPlaceHolder id="head" runat="server">
     </asp:ContentPlaceHolder>
 </head>
 <body>
     <form id="form1" runat="server">
-    <div>
-        <asp:ContentPlaceHolder id="ContentPlaceHolder1" runat="server">
-        
-        </asp:ContentPlaceHolder>
+    <div id="divLeader" runat="server" align="center">
+        <b>
+            <asp:Label ID="lblTitle" runat="server" ></asp:Label>
+        </b>
+        <asp:HyperLink ID="hylkDiary" runat="server" Text="日志"  NavigateUrl="~/DiaryPage.aspx"></asp:HyperLink>
+        <asp:HyperLink ID="hylkAlbum" runat="server" Text="相册"  NavigateUrl="~/AlbumPage.aspx"></asp:HyperLink>
+        <asp:HyperLink ID="hylkMessage" runat="server" Text="留言板" NavigateUrl="~/MessagePage.aspx"></asp:HyperLink>
+        <asp:HyperLink ID="hylkInfo" runat="server" Text="个人档"  NavigateUrl="~/PersonalInfoPage.aspx"></asp:HyperLink>
+        <asp:HyperLink ID="hylkStatus" runat="server" Text="说说" NavigateUrl="~/StatusPage.aspx"></asp:HyperLink>
+        <asp:Button ID="hylkAllFriends" runat="server" Text="查看好友"  OnClick="hylkAllFriends_Click" />
+        <asp:Button ID="btnAllApplication" runat="server" Text="新朋友" OnClick="btnAllApplication_Click" />
+        <asp:HyperLink ID="btnBack" runat="server" Text="返回我的个人中心" NavigateUrl="~/PersonalCenterPage.aspx"></asp:HyperLink>
+        <%--<asp:Button ID="btnAddFriend" runat="server" Text="加好友" OnClick="btnAddFriend_Click" />--%>
+        <img id="imgHead" runat ="server"   Width="100" Height="100" />
+        <%--<asp:Image ID="imgHead" runat="server"  Width="100" Height="100"/>--%>
     </div>
+
+    <div id="divApplications" runat="server"  visible="false">
+            <asp:Repeater ID="rptApplications" runat="server" OnItemCommand="rptApplications_ItemCommand">
+                <HeaderTemplate>
+                    <table>
+                        <tr>
+                            <th>账号</th>
+                            <th>昵称</th>
+                            <th>备注</th>
+                        </tr>
+                </HeaderTemplate>
+                <ItemTemplate>
+                    <%# Eval("number") %>
+                    <%# Eval("nickname") %>
+                    <%# Eval("note") %>
+                    <asp:Button ID="btnPass" runat="server" Text="同意" CommandName="btnPass" CommandArgument='<%# Eval("id") %>' />
+                    <asp:Button ID="btnIgnore" runat="server" Text="不同意" CommandName="btnIgnore" CommandArgument='<%# Eval("id") %>' />
+                </ItemTemplate>
+                <FooterTemplate>
+                    </table>
+                </FooterTemplate>
+            </asp:Repeater>
+            <asp:Button ID="btnUpApp" runat="server" Text="上一页"  OnClick="btnUpApp_Click" />
+            <asp:Button ID="btnDownApp" runat="server" Text="下一页"  OnClick="btnDownApp_Click"/>
+            <asp:Button ID="btnFirstApp" runat="server" Text="首页" OnClick="btnFirstApp_Click"/>
+            <asp:Button ID="btnLastApp" runat="server" Text="尾页" OnClick="btnLastApp_Click"/>
+            页次<asp:Label ID="lblNowApp" runat="server" ></asp:Label>
+            /<asp:Label ID="lblTotalApp" runat="server" ></asp:Label>
+            转<asp:TextBox ID="txtJumpApp" runat="server" ></asp:TextBox>
+            <asp:Button ID="btnJumpApp" runat="server" Text="Go" OnClick="btnJumpApp_Click" />
+        </div>
+
+
+        <div id="divAddSearch" runat="server" align="center">
+            <asp:Button ID="btnLogout" runat="server" Text="注销" OnClick="btnLogout_Click" />
+            搜索(请输入好友昵称/QQ账号)：
+            <asp:TextBox ID="txtSearch" runat="server" ></asp:TextBox>
+            <asp:Button ID="btnSearch" runat="server" Text="查找" OnClick="btnSearch_Click" />
+        </div>
+
+        <div id="divSearchResult" runat="server" visible="false">
+            <asp:Repeater ID="rptSearchResult" runat="server"  OnItemCommand="rptSearchResult_ItemCommand" OnItemDataBound="rptSearchResult_ItemDataBound">
+                <HeaderTemplate>
+                    <table>
+                        <tr>
+                            <th>昵称</th>
+                            <th>账号</th>
+                            <th>在线状态</th>
+                        </tr>
+                </HeaderTemplate>
+                <ItemTemplate>
+                    <asp:LinkButton ID="lkbtnNickname" runat="server" Text='<%# Eval("nickname") %>'  CommandArgument='<%# Eval("id") %>' PostBackUrl='<%#"StatusPage.aspx?id="+Eval("id") %>'></asp:LinkButton>
+                    <%# Eval("number") %>
+                    <%# Eval("loginstatus") %>
+                    <asp:Button ID="btnAddFriend" runat="server" Text="加为好友" CommandName="btnAddFriend" />
+                    <asp:TextBox ID="txtApplication" runat="server"  Visible="false"></asp:TextBox>
+                    <asp:Button ID="btnSendApplication" runat="server" Text="发送请求" CommandName="btnSendApplication" CommandArgument='<%# Eval("id") %>' Visible="false" />
+                </ItemTemplate>
+                <FooterTemplate>
+                    </table>
+                </FooterTemplate>
+            </asp:Repeater>
+        </div>
+
+        <div id="divResearchPages" runat="server"  visible="false">
+            <asp:Button ID="btnUpResult" runat="server" Text="上一页"  OnClick="btnUpResult_Click" />
+            <asp:Button ID="btnDownResult" runat="server" Text="下一页"  OnClick="btnDownResult_Click"/>
+            <asp:Button ID="btnFirstResult" runat="server" Text="首页" OnClick="btnFirstResult_Click"/>
+            <asp:Button ID="btnLastResult" runat="server" Text="尾页"  OnClick="btnLastResult_Click"/>
+            页次<asp:Label ID="lblNowResult" runat="server" ></asp:Label>
+            /<asp:Label ID="lblTotalResult" runat="server" ></asp:Label>
+            转<asp:TextBox ID="txtJumpResult" runat="server" ></asp:TextBox>
+            <asp:Button ID="btnJumpResult" runat="server" Text="Go" OnClick="btnJumpResult_Click" />
+        </div>
+
+        <div id="divAllFriends" runat="server" visible="false">
+            <asp:Repeater ID="rptFriends" runat="server" OnItemCommand="rptFriends_ItemCommand">
+                <HeaderTemplate>
+                    <table>
+                        <tr>
+                        <th>昵称</th>
+                        <th>在线状态</th>
+                            </tr>
+                </HeaderTemplate>
+                
+                <ItemTemplate>
+                    <asp:LinkButton ID="lkbtnNickname2" runat="server" Text='<%# Eval("nickname") %>'  CommandArgument='<%# Eval("friendId") %>' PostBackUrl='<%#"StatusPage.aspx?id="+Eval("friendId") %>'></asp:LinkButton>
+                   
+                    <asp:Label ID="lblFriendStatus" runat="server"  CommandName="lblStatus" Text='<%# Eval("loginstatus") %>'></asp:Label>
+                    <asp:Button ID="btnDelFriend"  Text="删除好友" runat="server" CommandName="btnDel" CommandArgument='<%# Eval("friendId") %>' />
+                </ItemTemplate>
+                <FooterTemplate>
+                    </table>
+                </FooterTemplate>
+            </asp:Repeater>
+            <asp:Button ID="btnUp" runat="server" Text="上一页"  OnClick="btnUp_Click" />
+            <asp:Button ID="btnDown" runat="server" Text="下一页"  OnClick="btnDown_Click"/>
+            <asp:Button ID="btnFirst" runat="server" Text="首页" OnClick="btnFirst_Click" />
+            <asp:Button ID="btnLast" runat="server" Text="尾页"  OnClick="btnLast_Click"/>
+            页次<asp:Label ID="lblNow" runat="server" ></asp:Label>
+            /<asp:Label ID="lblTotal" runat="server" ></asp:Label>
+            转<asp:TextBox ID="txtJump" runat="server" ></asp:TextBox>
+            <asp:Button ID="btnJump" runat="server" Text="Go" OnClick="btnJump_Click" />
+        </div>
+        <asp:ContentPlaceHolder id="ContentPlaceHolder1" runat="server" >
+        </asp:ContentPlaceHolder>
+    
     </form>
 </body>
 </html>

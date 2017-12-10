@@ -21,7 +21,7 @@
         <asp:RadioButton ID="btnRememberPwd" runat="server" TextAlign="Right" Text="记住密码" />
         <br />
         <asp:Button ID="btnLogin" runat="server" Text="登陆" OnClick="btnLogin_Click" /> <br />
-        <asp:HyperLink ID="forgetPwdLINK" runat="server" Text="忘记密码？" NavigateUrl="~/ForgetPwd.aspx" ></asp:HyperLink> <br />
+        <asp:HyperLink ID="forgetPwdLINK" runat="server" Text="忘记密码？" NavigateUrl="~/ForgetPwdPage.aspx" ></asp:HyperLink> <br />
         <asp:Button ID="btnRegister" runat="server" Text="注册" OnClick="btnRegister_Click" />
     </div>
     </form>

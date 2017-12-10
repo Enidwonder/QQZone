@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -39,14 +40,25 @@ public partial class Register : System.Web.UI.Page
             SQLOperation sql = new SQLOperation();
             //    sql = new SQLOperation();
             string nickname = txtName.Text;
-            string password = txtPwdSet.Text;
+            string password = operate.MD5String(txtPwdSet.Text);
             string loginstatus = "下线";
             string email = txtEmail.Text;
             //' nickname  ','number','password','loginstatus','name','sex','age','headpicture','email','birthday'
-            string values = "'" + nickname + "', " + "N'" + number + "','" + password + "','" + loginstatus + "','" + null + "','" + sex + "','" + null + "','" + null + "','" + email + "','" + null + "'";
+            string values = "N'" + nickname + "', " + "N'" + number + "','" + password + "',N'" + loginstatus + "','" + null + "',N'" + sex + "','" + null + "',' ~\\images\\default.png ','" + email + "','" + null + "'";
+            
             if(sql.add(" users ", values))
             {
-                Response.Write("<script> alert('注册成功你的账号是" + number + "');location=  'MainPage.aspx'</script> ");
+                DataTable dt = sql.select(" id ", " users ", " number = '" + number + "'");
+                string id = dt.Rows[0][0].ToString();
+                string zoneDefultValue = id + ",N'" + nickname + "的空间'"; //give a default name for zone
+                //userid,name,classkind,amount
+                sql.add(" classes ", " " + id + " ,'所有日志','日志',0,'F'");//注册就得到一个存放所有日志的默认分类
+                sql.add(" a_album ", " " + id + ",'所有照片',0,null,null,'F'");//注册的到一个默认相册
+                if(sql.add(" zoneInfo ", zoneDefultValue))
+                {
+                    Response.Write("<script> alert('注册成功你的账号是" + number + "');location=  'MainPage.aspx'</script> ");
+                }
+                
             }
             else
             {

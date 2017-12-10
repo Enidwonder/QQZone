@@ -1,28 +1,91 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Net.Mail;
 using System.Security.Cryptography;
 using System.Text;
 using System.Web;
+using System.Web.UI.WebControls;
 
 /// <summary>
 /// SpecialOperations 的摘要说明
 /// </summary>
-public class SpecialOperations
+public class SpecialOperations : System.Web.UI.Page
 {
+   // System.Web.UI.Page page;
     public SpecialOperations()
     {
-        //
-        // TODO: 在此处添加构造函数逻辑
-        //
+        
+    }
+    public bool onlyFriendsJudge(string visitorID,string visitedID) //仅好友访问的权限判断
+    {
+        SQLOperation sql = new SQLOperation();
+        DataTable dt = sql.select(" * ", " friends ", " (userID= " + visitorID + " and friendID=" + visitedID + ") or (userID=" + visitedID + " and friendID=" + visitorID + ")");
+        if(dt.Rows.Count == 0) //没有好友关系，不允许访问
+        {
+            return false;
+        }
+        else //存在好友关系，可以访问
+        {
+            return true;
+        }
+    }
+
+    public bool someFriendsCantSee(string visitorID,string visitedID,string combinedID,string kind) //部分好友不可见的权限判断
+    {
+        bool isFriend = onlyFriendsJudge(visitorID, visitedID);
+        if (!isFriend)
+        {
+            return false;
+        }
+        else
+        {
+            SQLOperation sql = new SQLOperation();
+            DataTable dt = sql.select(" * ", " whocantsee ", " visitorID= " + visitorID + " and visitedID=" + visitedID + " and combinedID=" + combinedID + " and kind='" + kind + "'");
+            if(dt.Rows.Count == 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
+    public void txtJudge(TextBox txt, System.Web.UI.Page page)
+    {
+        if(txt == null)
+        {
+            alertHelper(page,"有为空内容，操作失败！");
+        }
+    }
+
+    public void txtJudge(TextBox txt,int lengthLimit, System.Web.UI.Page page)
+    {
+        txtJudge(txt,page);
+        if(txt.Text.Length > lengthLimit)
+        {
+            alertHelper(page,"有超出规定长度，操作失败！");
+        }
+    }
+
+    public void alertHelper(System.Web.UI.Page page,string content)
+    {
+        page.Response.Write("<script> alert('" + content + "');</script> ");
+    }
+
+    public void alertHelper(System.Web.UI.Page page,string content,string toLocation)
+    {
+        page.Response.Write("<script> alert('"+content+"');location=  '"+toLocation+"'</script> ");
+
     }
 
     public string MD5String(string text1) //MD5对字符串进行加密
     {
-        MD5 md5 = new MD5CryptoServiceProvider();
-        byte[] text2 = md5.ComputeHash(System.Text.Encoding.Default.GetBytes(text1));
-        string result = System.Text.Encoding.Default.GetString(text2);
+        //MD5 md5 = new MD5CryptoServiceProvider();
+        //byte[] text2 = md5.ComputeHash(System.Text.Encoding.Default.GetBytes(text1));
+        string result = System.Web.Security.FormsAuthentication.HashPasswordForStoringInConfigFile(text1, "MD5");
         return result;
     }
 
@@ -90,16 +153,16 @@ public class SpecialOperations
     {
         char[] constant =
         {
-        '0','1','2','3','4','5','6','7','8','9',
-        'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z',
-        'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'
+        '0','1','2','3','4','5','6','7','8','9'
+        //'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z',
+      //  'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'
          };
 
         System.Text.StringBuilder newRandom = new System.Text.StringBuilder(62);
         Random rd = new Random();
         for (int i = 0; i < length; i++)
         {
-            newRandom.Append(constant[rd.Next(62)]);
+            newRandom.Append(constant[rd.Next(10)]);
         }
         return newRandom.ToString();
     }
