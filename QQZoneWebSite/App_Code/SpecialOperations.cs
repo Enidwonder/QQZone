@@ -96,7 +96,7 @@ public class SpecialOperations : System.Web.UI.Page
         msg.To.Add(toEmail);//收件人地址 
                             // msg.CC.Add("enid1999@163.com");//抄送人地址 
 
-        msg.From = new MailAddress("enid1999@163.com", "Library");//发件人邮箱，名称 
+        msg.From = new MailAddress("enid@163.com", "Library");//发件人邮箱，名称 
 
         msg.Subject = "Library验证码";//邮件标题 
         msg.SubjectEncoding = Encoding.UTF8;//标题格式为UTF8 
@@ -111,7 +111,7 @@ public class SpecialOperations : System.Web.UI.Page
 
         client.EnableSsl = true;//启用SSL加密 
                                 //发件人邮箱账号，授权码(注意此处，是授权码你需要到qq邮箱里点设置开启Smtp服务，然后会提示你第三方登录时密码处填写授权码)
-        client.Credentials = new System.Net.NetworkCredential("enid1999@163.com", "Ekpm5T");
+        client.Credentials = new System.Net.NetworkCredential("enid@163.com", "******");
 
         try
         {
